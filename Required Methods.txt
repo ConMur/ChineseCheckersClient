@@ -1,5 +1,6 @@
 Methods needed to communicate between AI and server listener
 1) void set(int row, int col, int colour) //Sets the specified row and col of the board to the given colour
+**I DID THIS**
 2) Move calculateMove() //Returns a Move object containing the old position of the piece and the new position of the piece
 3) void newGame() //Resets variables for a new game
 4) void win(int winner, int place) //Deals with a win
