@@ -10,6 +10,11 @@ public class BoardSpot
 	{
 		this.color = color;
 	}
+	
+	public BoardSpot(int color)
+	{
+		setColor(color);
+	}
 
 	public BoardSpot()
 	{

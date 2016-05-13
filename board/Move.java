@@ -9,6 +9,13 @@ public class Move
 {
 	private int oldRow, oldCol, newRow, newCol;
 	
+	/**
+	 * Creates a move
+	 * @param oldRow the old row of the piece before moving it
+	 * @param oldCol the old column of the piece before moving it
+	 * @param newRow the new row of the piece after moving it
+	 * @param newCol the new column of the piece after moving it
+	 */
 	public Move(int oldRow, int oldCol, int newRow, int newCol)
 	{
 		this.oldRow = oldRow;
@@ -36,6 +43,4 @@ public class Move
 	{
 		return newCol;
 	}
-	
-	
 }

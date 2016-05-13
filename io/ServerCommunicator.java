@@ -9,6 +9,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.StringTokenizer;
 
+import board.Board;
+
 /**
  * The way to communicate with the server. It listens to incoming commands and
  * responds to them as needed
@@ -142,20 +144,12 @@ public class ServerCommunicator
 				}
 				else if (cmd == ServerCommand.PLACE_PIECE)
 				{
-					// Read in the whole board
-					while (tokenizer.hasMoreTokens())
-					{
-						if (!tokenizer.nextToken().equals(String.valueOf(3)))
-						{
-							// The command is not to place a piece so exit
-							break;
-						}
-						int row = Integer.parseInt(tokenizer.nextToken());
-						int col = Integer.parseInt(tokenizer.nextToken());
+					int colour = Integer.parseInt(tokenizer.nextToken());
+					int row = Integer.parseInt(tokenizer.nextToken());
+					int col = Integer.parseInt(tokenizer.nextToken());
 
-						// TODO: update board
-					}
-
+					// TODO: update board
+					Board.set(row, col, colour);
 				}
 				else if (cmd == ServerCommand.YOUR_TURN)
 				{
@@ -164,6 +158,10 @@ public class ServerCommunicator
 				else if (cmd == ServerCommand.INVALID_MOVE)
 				{
 					System.err.println("Invalid move made");
+				}
+				else if (cmd == ServerCommand.TIMEOUT)
+				{
+					System.err.println("Timout");
 				}
 				else if (cmd == ServerCommand.WIN)
 				{

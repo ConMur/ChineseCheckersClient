@@ -17,7 +17,6 @@ import board.Board;
  */
 public class CCPanel extends JPanel
 {
-	private Board board;
 	private boolean running;
 	private ServerCommunicator communicator;
 	
@@ -33,7 +32,8 @@ public class CCPanel extends JPanel
 	{
 		super();
 		setPreferredSize(new Dimension(600, 400));
-		board = new Board();
+		Board.init();
+		Board.set(4,0, Color.BLUE);
 		running = true;
 		//TODO: uncomment when testing with server
 		//communicator = new ServerCommunicator(IP, PORT);
@@ -52,7 +52,7 @@ public class CCPanel extends JPanel
 			//Draw background
 			g.setColor(Color.BLACK);
 			g.fillRect(0, 0, getWidth(), getHeight());
-			board.drawBoard(g);
+			Board.drawBoard(g);
 			try
 			{
 				Thread.sleep(15);
