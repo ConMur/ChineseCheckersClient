@@ -3,30 +3,70 @@ package board;
 import java.awt.Color;
 import java.awt.Graphics;
 
+/**
+ * Represents a Chinese Checkers board
+ * @author Connor Murphy
+ *
+ */
 public class Board
 {
 	private BoardSpot[][] board;
 	private boolean[][] invalidSpots;
 
 	private final int SIZE = 17;
+	private final int SPOT_SIZE = 20;
 
 	/**
-	 * Creates a Chinese checkers board of the given size
-	 * @param size the size of the board
+	 * Creates a Chinese checkers board
 	 */
 	public Board()
 	{
 		board = new BoardSpot[SIZE][SIZE];
 		invalidSpots = new boolean[SIZE][SIZE];
 		setBounds();
-		
+
 		resetBoard();
+	}
+	
+	/**
+	 * Draws the board to the specified graphics context
+	 * @param g the graphics to draw to
+	 */
+	public void drawBoard(Graphics g)
+	{
+		// Draw each spot
+		for (int r = 0; r < board.length; ++r)
+		{
+			//Spacing from the left edge of the screen as this is not a 2D array
+			int spacing = (board.length - r) * (SPOT_SIZE - 10);
+			
+			for (int c = 0; c < board[0].length; ++c)
+			{
+				Color color = board[r][c].getColor();
+
+				if (color == null)
+				{
+					g.setColor(Color.WHITE);
+				}
+				else
+				{
+					g.setColor(color);
+				}
+
+				// Draw only valid spots
+				if (!invalidSpots[r][c])
+				{
+					g.fillOval(c * SPOT_SIZE + spacing, r * SPOT_SIZE,
+							SPOT_SIZE, SPOT_SIZE);
+				}
+			}
+		}
 	}
 
 	/**
-	 * Draws the board in its current state
+	 * Draws the board in its current state to the console
 	 */
-	public void drawBoard(Graphics g)
+	public void drawBoard()
 	{
 		for (int r = 0; r < board.length; ++r)
 		{
@@ -70,6 +110,10 @@ public class Board
 				{
 					line += "v";
 				}
+				else
+				{
+					line += "~";
+				}
 			}
 			System.out.println(line);
 		}
@@ -81,13 +125,22 @@ public class Board
 	 * @param col the column of the board to set
 	 * @param color the color of the place. Use null if there is no color in the
 	 *            spot
+	 * @throws IllegalArgumentException if the row that is set is not a valid row
 	 */
 	public void set(int row, int col, Color color)
 	{
+		if (invalidSpots[row][col])
+			throw new IllegalArgumentException(
+					"That is an invalid spot! (row: " + row + " col: " + col
+							+ ")");
+		
 		board[row][col] = new BoardSpot(color);
 	}
-
-	public void setBounds()
+	
+	/**
+	 * Sets the spots in the board that are invalid locations
+	 */
+	private void setBounds()
 	{
 		// upper left
 		for (int i = 0; i <= 3; i++)
@@ -99,7 +152,7 @@ public class Board
 				invalidSpots[i][j] = true;
 		// upper right
 		for (int i = 8; i <= 16; i++)
-			for (int j = 0; j <= 4; j++)
+			for (int j = 0; j <= 3; j++)
 				invalidSpots[i][j] = true;
 		for (int i = 13; i <= 16; i++)
 			for (int j = 4; j <= 8; j++)
@@ -143,8 +196,12 @@ public class Board
 		invalidSpots[16][9] = true;
 		invalidSpots[16][10] = true;
 		invalidSpots[16][11] = true;
-	}
 
+	}
+	
+	/**
+	 * Resets the board to an empty board
+	 */
 	private void resetBoard()
 	{
 		for (int r = 0; r < board.length; ++r)
