@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
 import board.Board;
@@ -23,6 +24,9 @@ public class ServerCommunicator
 
 	private BufferedReader in;
 	private BufferedWriter out;
+
+	private PriorityQueue<Message> inQueue;
+	private PriorityQueue<Message> outQueue;
 
 	/**
 	 * Sets up the streams needed to communicate with the server
@@ -48,6 +52,10 @@ public class ServerCommunicator
 			e.printStackTrace();
 		}
 		running = true;
+
+		inQueue = new PriorityQueue<>();
+		outQueue = new PriorityQueue<>();
+
 		start();
 	}
 
@@ -61,6 +69,7 @@ public class ServerCommunicator
 			return;
 
 		Thread t = new Thread(new ListeningThread());
+		t.setName("Server Listening Thread");
 		t.start();
 		running = true;
 	}
@@ -90,9 +99,68 @@ public class ServerCommunicator
 		}
 	}
 
+	public void update()
+	{
+		//Get the highest priority message from the server
+		Message message = inQueue.poll();
+
+		//Ensure there is a message to process
+		if(message != null) {
+			ServerCommand cmd = message.getCommand();
+			StringTokenizer tokenizer = new StringTokenizer(message.getMessage());
+
+			if (cmd == ServerCommand.MOVE) {
+				int oldRow = Integer.parseInt(tokenizer.nextToken());
+				int oldCol = Integer.parseInt(tokenizer.nextToken());
+				int newRow = Integer.parseInt(tokenizer.nextToken());
+				int newCol = Integer.parseInt(tokenizer.nextToken());
+
+				// TODO: Update board
+			} else if (cmd == ServerCommand.NEW_GAME) {
+				int colour = Integer.parseInt(tokenizer.nextToken());
+
+				// TODO: set the colour
+			} else if (cmd == ServerCommand.PLACE_PIECE) {
+				int colour = Integer.parseInt(tokenizer.nextToken());
+				int row = Integer.parseInt(tokenizer.nextToken());
+				int col = Integer.parseInt(tokenizer.nextToken());
+
+				Board.set(row, col, colour);
+			} else if (cmd == ServerCommand.YOUR_TURN) {
+				// TODO: start AI looking
+			} else if (cmd == ServerCommand.INVALID_MOVE) {
+				System.err.println("Invalid move made");
+			} else if (cmd == ServerCommand.TIMEOUT) {
+				System.err.println("Timeout");
+			} else if (cmd == ServerCommand.WIN) {
+				// TODO: win
+			} else {
+				System.err.println("This line should never be reached");
+			}
+		}
+
+		//Send the highest priority message to the server
+		Message toSend = outQueue.poll();
+
+		//Ensure there is a message to process
+		if(toSend != null)
+		{
+			try {
+				out.write(toSend.getMessage());
+				out.flush();
+			}
+			catch(IOException ioe)
+			{
+				System.err.println("Error sending a message to the server");
+				ioe.printStackTrace();
+			}
+		}
+
+	}
+
 	/**
 	 * A thread that listens to the server commands and processes them as
-	 * nessecary
+	 * necessary
 	 * @author Connor Murphy
 	 *
 	 */
@@ -101,18 +169,17 @@ public class ServerCommunicator
 
 		@Override
 		/**
-		 * Listens for server commands and deals with them as needed
+		 * Listens for server commands and adds them to the queue
 		 */
 		public void run()
 		{
 			while (running)
 			{
-				int cmdNo = -1;
-				StringTokenizer tokenizer = null;
-
+				String line;
+				StringTokenizer tokenizer;
 				try
 				{
-					String line = in.readLine();
+					line = in.readLine();
 					tokenizer = new StringTokenizer(line);
 				}
 				catch (NumberFormatException | IOException e)
@@ -121,55 +188,25 @@ public class ServerCommunicator
 					return;
 				}
 
-				cmdNo = Integer.parseInt(tokenizer.nextToken());
+				int cmdNo = Integer.parseInt(tokenizer.nextToken());
 
 				// Change the numerical command into the corresponding enum
 				// value
-				ServerCommand cmd = ServerCommand.values()[cmdNo];
+				ServerCommand cmd;
+				try {
+					 cmd = ServerCommand.values()[cmdNo];
+				}
+				catch (ArrayIndexOutOfBoundsException e)
+				{
+					throw new RuntimeException("The command number, " + cmdNo + " is invalid");
+				}
 
-				if (cmd == ServerCommand.MOVE)
-				{
-					int oldRow = Integer.parseInt(tokenizer.nextToken());
-					int oldCol = Integer.parseInt(tokenizer.nextToken());
-					int newRow = Integer.parseInt(tokenizer.nextToken());
-					int newCol = Integer.parseInt(tokenizer.nextToken());
-
-					// TODO: Update board
-				}
-				else if (cmd == ServerCommand.NEW_GAME)
-				{
-					int colour = Integer.parseInt(tokenizer.nextToken());
-
-					// TODO: set the colour
-				}
-				else if (cmd == ServerCommand.PLACE_PIECE)
-				{
-					int colour = Integer.parseInt(tokenizer.nextToken());
-					int row = Integer.parseInt(tokenizer.nextToken());
-					int col = Integer.parseInt(tokenizer.nextToken());
-
-					// TODO: update board
-					Board.set(row, col, colour);
-				}
-				else if (cmd == ServerCommand.YOUR_TURN)
-				{
-					// TODO: start AI looking
-				}
-				else if (cmd == ServerCommand.INVALID_MOVE)
-				{
-					System.err.println("Invalid move made");
-				}
-				else if (cmd == ServerCommand.TIMEOUT)
-				{
-					System.err.println("Timout");
-				}
-				else if (cmd == ServerCommand.WIN)
-				{
-					// TODO: win
+				if(cmd == ServerCommand.INVALID_MOVE || cmd == ServerCommand.TIMEOUT) {
+					inQueue.add(new Message(line, cmd, Priority.HIGH));
 				}
 				else
 				{
-					System.err.println("Unknown server command: " + cmdNo);
+					inQueue.add(new Message(line, cmd, Priority.NORMAL));
 				}
 			}
 		}

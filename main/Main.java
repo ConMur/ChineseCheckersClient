@@ -4,6 +4,7 @@ import gui.CCPanel;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Set;
 
 import javax.swing.JFrame;
 
@@ -23,10 +24,26 @@ public class Main
 			{
 				panel.stop();
 				frame.dispose();
+				Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+				Thread[] threadArray = threadSet.toArray(new Thread[threadSet.size()]);
+				for(Thread t : threadArray)
+				{
+					System.out.println(t.getName());
+
+				}
 			}
 		});
 		
 		frame.setVisible(true);
 		panel.go();
+
+		System.out.println("-----------------");
+		Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+		Thread[] threadArray = threadSet.toArray(new Thread[threadSet.size()]);
+		for(Thread t : threadArray)
+		{
+			System.out.println(t.getName());
+
+		}
 	}
 }
