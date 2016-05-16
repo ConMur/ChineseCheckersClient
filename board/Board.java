@@ -5,11 +5,11 @@ import java.awt.Graphics;
 
 /**
  * Represents a Chinese Checkers board
+ * 
  * @author Connor Murphy
  *
  */
-public final class Board
-{
+public final class Board {
 	private static BoardSpot[][] board;
 	private static boolean[][] invalidSpots;
 
@@ -19,13 +19,11 @@ public final class Board
 	/**
 	 * Creates a Chinese checkers board
 	 */
-	private Board()
-	{
+	private Board() {
 
 	}
 
-	public static void init()
-	{
+	public static void init() {
 		board = new BoardSpot[SIZE][SIZE];
 		invalidSpots = new boolean[SIZE][SIZE];
 		setBounds();
@@ -33,35 +31,44 @@ public final class Board
 		resetBoard();
 	}
 
+	public static boolean isValidSpot(int row, int col) {
+		if (row >= 0 || col >= 0 || row < SIZE || col < SIZE
+				|| !invalidSpots[row][col]) {
+			return true;
+		}
+		return false;
+	}
+
+	public static BoardSpot getSpot(int row, int col) {
+		if (isValidSpot(row, col))
+			return board[row][col];
+		return null;
+	}
+
 	/**
 	 * Draws the board to the specified graphics context
-	 * @param g the graphics to draw to
+	 * 
+	 * @param g
+	 *            the graphics to draw to
 	 */
-	public static void drawBoard(Graphics g)
-	{
+	public static void drawBoard(Graphics g) {
 		// Draw each spot
-		for (int r = 0; r < board.length; ++r)
-		{
+		for (int r = 0; r < board.length; ++r) {
 			// Spacing from the left edge of the screen as this is not a 2D
 			// array
 			int spacing = (board.length - r) * (SPOT_SIZE - 10);
 
-			for (int c = 0; c < board[0].length; ++c)
-			{
+			for (int c = 0; c < board[0].length; ++c) {
 				Color color = board[r][c].getColor();
 
-				if (color == null)
-				{
+				if (color == null) {
 					g.setColor(Color.WHITE);
-				}
-				else
-				{
+				} else {
 					g.setColor(color);
 				}
 
 				// Draw only valid spots
-				if (!invalidSpots[r][c])
-				{
+				if (!invalidSpots[r][c]) {
 					g.fillOval(c * SPOT_SIZE + spacing, r * SPOT_SIZE,
 							SPOT_SIZE, SPOT_SIZE);
 				}
@@ -72,52 +79,33 @@ public final class Board
 	/**
 	 * Draws the board in its current state to the console
 	 */
-	public static void drawBoard()
-	{
-		for (int r = 0; r < board.length; ++r)
-		{
+	public static void drawBoard() {
+		for (int r = 0; r < board.length; ++r) {
 			String line = "";
 			String space = " ";
 
 			// Add spaces before the line
-			for (int i = 0; i < board.length - r; ++i)
-			{
+			for (int i = 0; i < board.length - r; ++i) {
 				line += space;
 			}
 
-			for (int c = 0; c < board[0].length; ++c)
-			{
+			for (int c = 0; c < board[0].length; ++c) {
 				Color color = board[r][c].getColor();
-				if (color == null)
-				{
+				if (color == null) {
 					line += "*";
-				}
-				else if (color == Color.RED)
-				{
+				} else if (color == Color.RED) {
 					line += "r";
-				}
-				else if (color == Color.ORANGE)
-				{
+				} else if (color == Color.ORANGE) {
 					line += "o";
-				}
-				else if (color == Color.YELLOW)
-				{
+				} else if (color == Color.YELLOW) {
 					line += "y";
-				}
-				else if (color == Color.GREEN)
-				{
+				} else if (color == Color.GREEN) {
 					line += "g";
-				}
-				else if (color == Color.BLUE)
-				{
+				} else if (color == Color.BLUE) {
 					line += "b";
-				}
-				else if (color == Color.MAGENTA)
-				{
+				} else if (color == Color.MAGENTA) {
 					line += "v";
-				}
-				else
-				{
+				} else {
 					line += "~";
 				}
 			}
@@ -127,15 +115,18 @@ public final class Board
 
 	/**
 	 * Sets the specified place in the board to the given color.
-	 * @param row the row of the board to set
-	 * @param col the column of the board to set
-	 * @param color the color of the place. Use null if there is no color in the
+	 * 
+	 * @param row
+	 *            the row of the board to set
+	 * @param col
+	 *            the column of the board to set
+	 * @param color
+	 *            the color of the place. Use null if there is no color in the
 	 *            spot
-	 * @throws IllegalArgumentException if the row that is set is not a valid
-	 *             row
+	 * @throws IllegalArgumentException
+	 *             if the row that is set is not a valid row
 	 */
-	public static void set(int row, int col, Color color)
-	{
+	public static void set(int row, int col, Color color) {
 		if (invalidSpots[row][col])
 			throw new IllegalArgumentException(
 					"That is an invalid spot! (row: " + row + " col: " + col
@@ -144,8 +135,7 @@ public final class Board
 		board[row][col] = new BoardSpot(color);
 	}
 
-	public static void set(int row, int col, int color)
-	{
+	public static void set(int row, int col, int color) {
 		if (invalidSpots[row][col])
 			throw new IllegalArgumentException(
 					"That is an invalid spot! (row: " + row + " col: " + col
@@ -157,8 +147,7 @@ public final class Board
 	/**
 	 * Sets the spots in the board that are invalid locations
 	 */
-	private static void setBounds()
-	{
+	private static void setBounds() {
 		// upper left
 		for (int i = 0; i <= 3; i++)
 			for (int j = 0; j <= 3; j++)
@@ -219,12 +208,9 @@ public final class Board
 	/**
 	 * Resets the board to an empty board
 	 */
-	private static void resetBoard()
-	{
-		for (int r = 0; r < board.length; ++r)
-		{
-			for (int c = 0; c < board[0].length; ++c)
-			{
+	private static void resetBoard() {
+		for (int r = 0; r < board.length; ++r) {
+			for (int c = 0; c < board[0].length; ++c) {
 				board[r][c] = new BoardSpot();
 			}
 		}
