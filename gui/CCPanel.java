@@ -24,8 +24,6 @@ public class CCPanel extends JPanel
 	private String ip = "127.0.0.1";
 	private int port = 5000;
 
-	private Graphics g;
-
 	/**
 	 * Sets up this panel and the necessary classes to play this Chinese
 	 * Checkers game
@@ -33,18 +31,27 @@ public class CCPanel extends JPanel
 	public CCPanel()
 	{
 		super();
-		
-		//Get Ip and port
-		ip = JOptionPane.showInputDialog("Enter the ip");
-		port = Integer.parseInt(JOptionPane.showInputDialog("Enter the port"));
-		
+
+		// Get Ip and port
+		String ipString = JOptionPane.showInputDialog("Enter the ip");
+		String portString = JOptionPane.showInputDialog("Enter the port");
+		if (ipString != null)
+		{
+			ip = ipString;
+		}
+
+		if (portString != null)
+		{
+			port = Integer.parseInt(portString);
+		}
+
 		setPreferredSize(new Dimension(600, 400));
 		Board.init();
 		Board.set(4, 0, Color.BLUE);
 		running = true;
 		// TODO: uncomment when testing with server
-		// communicator = new ServerCommunicator(ip, port);
-		// communicator.start();
+		 communicator = new ServerCommunicator(ip, port);
+		 communicator.start();
 	}
 
 	/**
@@ -52,8 +59,6 @@ public class CCPanel extends JPanel
 	 */
 	public void go()
 	{
-		g = this.getGraphics();
-
 		// Create and start a thread that refreshes the gui every so often
 		Thread drawThread = new Thread(new DrawThread());
 		drawThread.setName("Draw Thread");
@@ -63,7 +68,7 @@ public class CCPanel extends JPanel
 		while (running)
 		{
 			// TODO: uncomment when testing
-			// communicator.update();
+			 communicator.update();
 		}
 	}
 
@@ -74,10 +79,10 @@ public class CCPanel extends JPanel
 	{
 		running = false;
 		// TODO: uncomment
-		// communicator.stop();
-		// communicator.close();
+		 communicator.stop();
+		 communicator.close();
 	}
-	
+
 	@Override
 	public void paintComponent(Graphics g)
 	{
@@ -85,9 +90,9 @@ public class CCPanel extends JPanel
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		Board.drawBoard(g);
-		
+
 	}
-	
+
 	/**
 	 * Draws the board to the screen
 	 * @author Connor Murphy
