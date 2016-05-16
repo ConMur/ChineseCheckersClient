@@ -22,7 +22,7 @@ public class CCPanel extends JPanel
 	private ServerCommunicator communicator;
 
 	private String ip = "127.0.0.1";
-	private int port = 5000;
+	private int port = 5050;
 
 	/**
 	 * Sets up this panel and the necessary classes to play this Chinese
@@ -33,8 +33,8 @@ public class CCPanel extends JPanel
 		super();
 
 		// Get Ip and port
-		String ipString = JOptionPane.showInputDialog("Enter the ip");
-		String portString = JOptionPane.showInputDialog("Enter the port");
+		String ipString = null; //JOptionPane.showInputDialog("Enter the ip");
+		String portString = null; //JOptionPane.showInputDialog("Enter the port");
 		if (ipString != null)
 		{
 			ip = ipString;
