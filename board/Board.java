@@ -208,7 +208,7 @@ public final class Board {
 	/**
 	 * Resets the board to an empty board
 	 */
-	private static void resetBoard() {
+	public static void resetBoard() {
 		for (int r = 0; r < board.length; ++r) {
 			for (int c = 0; c < board[0].length; ++c) {
 				board[r][c] = new BoardSpot();
