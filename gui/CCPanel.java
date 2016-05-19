@@ -9,7 +9,6 @@ import java.awt.Graphics;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import ai.Piece;
 import board.Board;
 
 /**
@@ -22,7 +21,7 @@ public class CCPanel extends JPanel
 	private boolean running;
 	private ServerCommunicator communicator;
 
-	private String ip = "127.0.0.1";
+	private String ip = "10.242.171.255";
 	private int port = 5050;
 
 	/**
@@ -49,89 +48,7 @@ public class CCPanel extends JPanel
 		setPreferredSize(new Dimension(600, 400));
 		Board.init();
 
-		Board.set(9, 4, Color.MAGENTA);
-		for (int i = 0; i < 2; ++i)
-		{
-			Board.set(10, 4 + i,Color.MAGENTA);
-		}
-		for (int i = 0; i < 3; ++i)
-		{
-			Board.set(11, 4 + i, Color.MAGENTA);
-		}
-		for (int i = 0; i < 4; ++i)
-		{
-			Board.set(12, 4 + i, Color.MAGENTA);
-		}
 		
-		for (int i = 0; i < 4; ++i)
-		{
-			Board.set(4, 0 + i,Color.BLUE);
-		}
-		for (int i = 0; i < 3; ++i)
-		{
-			Board.set(5, 1 + i, Color.BLUE);
-		}
-		for (int i = 0; i < 2; ++i)
-		{
-			Board.set(6, 2 + i, Color.BLUE);
-		}
-		Board.set(7, 3, Color.BLUE);
-		
-		Board.set(0, 4, Color.GREEN);
-		for (int i = 0; i < 2; ++i)
-		{
-			Board.set(1, 4 + i, Color.GREEN);
-		}
-		for (int i = 0; i < 3; ++i)
-		{
-			Board.set(2, 4 + i, Color.GREEN);
-		}
-		for (int i = 0; i < 4; ++i)
-		{
-			Board.set(3, 4 + i, Color.GREEN);
-		}
-		
-		for (int i = 0; i < 4; ++i)
-		{
-			Board.set(4, 9 + i, Color.YELLOW);
-		}
-		for (int i = 0; i < 3; ++i)
-		{
-			Board.set(5, 10 + i, Color.YELLOW);
-		}
-		for (int i = 0; i < 2; ++i)
-		{
-			Board.set(6, 11 + i, Color.YELLOW);
-		}
-		Board.set(7, 12, Color.YELLOW);
-		
-		Board.set(9, 13,Color.ORANGE);
-		for (int i = 0; i < 2; ++i)
-		{
-			Board.set(10, 13 + i, Color.ORANGE);
-		}
-		for (int i = 0; i < 3; ++i)
-		{
-			Board.set(11, 13 + i, Color.ORANGE);
-		}
-		for (int i = 0; i < 4; ++i)
-		{
-			Board.set(12, 13 + i, Color.ORANGE);
-		}
-		
-		for (int i = 0; i < 4; ++i)
-		{
-			Board.set(13, 9 + i, Color.RED);
-		}
-		for (int i = 0; i < 3; ++i)
-		{
-			Board.set(14, 10 + i, Color.RED);
-		}
-		for (int i = 0; i < 2; ++i)
-		{
-			Board.set(15, 11 + i, Color.RED);
-		}
-		Board.set(16, 12, Color.RED);
 		
 		running = true;
 		// TODO: uncomment when testing with server
