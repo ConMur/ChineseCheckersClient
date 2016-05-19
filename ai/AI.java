@@ -16,6 +16,11 @@ public class AI {
 	static Point[] pieces;
 	static int turn;
 
+	/**
+	 * used by the program to return the optimal move out of all pieces
+	 * 
+	 * @return the best move
+	 */
 	public static Move getMove() {
 		turn++;
 
@@ -49,17 +54,13 @@ public class AI {
 			}
 		} else {
 
-			//cleanup later
 			visited = new boolean[17][17];
-
 			Point bestMovePiece = move(pieces[0].x, pieces[0].y, false);
-
 			int bestPiece = 0;
 
 			for (int i = 0; i < 10; i++) {
 				visited = new boolean[17][17];
 				Point tempMove = move(pieces[i].x, pieces[i].y, false);
-
 				if (tempMove != null && weightedBoard[pieces[bestPiece].y][pieces[bestPiece].x]
 						- weightedBoard[bestMovePiece.y][bestMovePiece.x] < weightedBoard[pieces[i].y][pieces[i].x]
 								- weightedBoard[tempMove.y][tempMove.x]) {
@@ -72,6 +73,13 @@ public class AI {
 
 	}
 
+	/**
+	 * Initial setup of the board
+	 * 
+	 * @param startingLocation
+	 *            the "color" int(1-6) that tells the ai where the starting
+	 *            locaation and end goals are
+	 */
 	public static void start(int startingLocation) {
 		turn = 0;
 		startLocation = startingLocation;
@@ -161,9 +169,9 @@ public class AI {
 		while (pieces[i].x != move.getOldCol() && pieces[i].y != move.getOldRow()) {
 			i++;
 		}
-		//BoardSpot temp = Board.getSpot(pieces[i].y, pieces[i].x);
-		//Board.set(move.getNewRow(), move.getNewCol(), temp.getColor());
-		//Board.set(move.getOldRow(), move.getOldCol(), null);
+		BoardSpot temp = Board.getSpot(pieces[i].y, pieces[i].x);
+		// Board.set(move.getNewRow(), move.getNewCol(), temp.getColor());
+		// Board.set(move.getOldRow(), move.getOldCol(), null);
 		pieces[i].x = move.getNewCol();
 		pieces[i].y = move.getNewRow();
 	}
@@ -173,28 +181,28 @@ public class AI {
 	 * state
 	 */
 
-/*	public static void main(String[] args) {
-		Board.init();
-		AI.start(1);
-		for (int i = 0; i < 17; i++) {
-			for (int j = 0; j < 17; j++) {
-				System.out.printf("%3d", weightedBoard[i][j]);
-			}
-			System.out.println();
-		}
+	/*
+	 * public static void main(String[] args) { Board.init(); AI.start(1); for
+	 * (int i = 0; i < 17; i++) { for (int j = 0; j < 17; j++) {
+	 * System.out.printf("%3d", weightedBoard[i][j]); } System.out.println(); }
+	 * 
+	 * Move m = getMove(); movePiece(m); System.out.println("Move 1: " +
+	 * m.toString()); m = getMove(); movePiece(m); System.out.println("Move 2: "
+	 * + m.toString()); m = getMove(); movePiece(m); System.out.println(
+	 * "Move 3: " + m.toString()); m = getMove(); movePiece(m);
+	 * System.out.println("Move 4: " + m.toString()); m = getMove();
+	 * movePiece(m); System.out.println("Move 4: " + m.toString()); }
+	 */
 
-		Move m = getMove();
-		movePiece(m);
-		System.out.println("Move 1: " + m.toString());
-		m = getMove();
-		movePiece(m);
-		System.out.println("Move 2: " + m.toString());
-		m = getMove();
-		movePiece(m);
-		System.out.println("Move 3: " + m.toString());
-
-	}*/
-
+	/**
+	 * used to setup the board initially. Sets up an array that stores the
+	 * distance of each spot from the winning goal corner. Performed using BFS
+	 * 
+	 * @param x
+	 *            the end goal x co-ord
+	 * @param y
+	 *            the end goal y co-ord
+	 */
 	private static void setWeight(int x, int y) {
 		visited = new boolean[17][17];
 		LinkedList<Point> l = new LinkedList<Point>();
@@ -219,6 +227,18 @@ public class AI {
 		}
 	}
 
+	/**
+	 * Finds the optimal move for a piece using DFS to evaluate all possible
+	 * situations
+	 * 
+	 * @param x
+	 *            x location of piece in board
+	 * @param y
+	 *            y location of piece in board
+	 * @param jumped
+	 *            has the piece performed a jump for the scenario
+	 * @return the optimal move for the piece
+	 */
 	private static Point move(int x, int y, boolean jumped) {
 		visited[y][x] = true;
 		if (!Board.isValidSpot(y, x)) {
