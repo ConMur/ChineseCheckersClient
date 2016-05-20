@@ -1,26 +1,29 @@
 package board;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 
-/**A Matrix representation of a Chinese Checkers board.
+/**
+ * Represents a Chinese Checkers board
+ * 
+ * @author Connor Murphy
+ *
  */
 public final class Board {
-	// Class fields.
 	private static BoardSpot[][] board;
 	private static boolean[][] invalidSpots;
 
 	private static final int SIZE = 17;
 	private static final int SPOT_SIZE = 20;
 
-	/**Empty constructor for a Chinese Checkers board.
-	 * Use methods to initialize the board.
+	/**
+	 * Creates a Chinese checkers board
 	 */
 	private Board() {
+
 	}
 
-	/**Initialize the board for this Board object.
-	 */
 	public static void init() {
 		board = new BoardSpot[SIZE][SIZE];
 		invalidSpots = new boolean[SIZE][SIZE];
@@ -29,32 +32,12 @@ public final class Board {
 		resetBoard();
 	}
 
-	/* BOARD BOUNDARIES METHODS */
-	
-	/**Check if it is a valid spot. This is a criteria of whether
-	 * a piece can land in this spot.
-	 * @param row Row number
-	 * @param col Column number
-	 * @return If the spot is in bounds.
-	 */
 	public static boolean isValidSpot(int row, int col) {
-		if (row >= 0 && col >= 0 && row < SIZE && col < SIZE
-				&& !invalidSpots[row][col]) {
+		if (row >= 0 || col >= 0 || row < SIZE || col < SIZE
+				|| !invalidSpots[row][col]) {
 			return true;
 		}
 		return false;
-	}
-	
-	/**Check if the current spot is taken by another piece.
-	 * It is another critera of whether a piece may land in this spot.
-	 * @param row Row number
-	 * @param col Column number
-	 * @return If the spot is taken.
-	 */
-	public static boolean isTaken(int row, int col) {
-		if (board[row][col].getColor() == null)
-			return false;
-		return true;
 	}
 
 	public static BoardSpot getSpot(int row, int col) {
@@ -63,14 +46,17 @@ public final class Board {
 		return null;
 	}
 
-	/**raws the board to the specified graphics context
-	 * @param g the graphics to draw to
+	/**
+	 * Draws the board to the specified graphics context
+	 * 
+	 * @param g
+	 *            the graphics to draw to
 	 */
 	public static void drawBoard(Graphics g) {
 		// Draw each spot
 		for (int r = 0; r < board.length; ++r) {
-			// Spacing from the left edge of the screen as the board itself
-			// is not a 2D array. We need to convert it from a 2D array.
+			// Spacing from the left edge of the screen as this is not a 2D
+			// array
 			int spacing = (board.length - r) * (SPOT_SIZE - 10);
 
 			for (int c = 0; c < board[0].length; ++c) {
@@ -86,12 +72,19 @@ public final class Board {
 				if (!invalidSpots[r][c]) {
 					g.fillOval(c * SPOT_SIZE + spacing, r * SPOT_SIZE,
 							SPOT_SIZE, SPOT_SIZE);
+					
+					//Draw index number
+					g.setFont(new Font("serif", Font.PLAIN, 9));
+					g.setColor(Color.BLACK);
+					g.drawString(r + "," + c, c * SPOT_SIZE + spacing + 2, r * SPOT_SIZE + 15);
 				}
+				
 			}
 		}
 	}
 
-	/**Draws the board in its current state to the console
+	/**
+	 * Draws the board in its current state to the console
 	 */
 	public static void drawBoard() {
 		for (int r = 0; r < board.length; ++r) {
@@ -124,38 +117,11 @@ public final class Board {
 				}
 			}
 			System.out.println(line);
-			
-			/* DEBUG */
-			for (r = 0; r < board.length; ++r) {
-				System.out.print("[");
-				for (int i = 0; i < board.length; ++i) {
-					if (isValidSpot(r, i)) {
-						if (board[r][i].getColor() == null)
-							System.out.print(" * ");
-						else if (board[r][i].getColor() == Color.RED)
-							System.out.print(" 1 ");
-						else if (board[r][i].getColor() == Color.ORANGE)
-							System.out.print(" 2 ");
-						else if (board[r][i].getColor() == Color.YELLOW)
-							System.out.print(" 3 ");
-						else if (board[r][i].getColor() == Color.GREEN)
-							System.out.print(" 4 ");
-						else if (board[r][i].getColor() == Color.BLUE)
-							System.out.print(" 5 ");
-						else if (board[r][i].getColor() == Color.MAGENTA)
-							System.out.print(" 6 ");
-						
-					}
-					else {
-						System.out.print("   ");
-					}
-				}
-				System.out.println("]");
-			}
 		}
 	}
 
-	/**Sets the specified place in the board to the given color.
+	/**
+	 * Sets the specified place in the board to the given color.
 	 * 
 	 * @param row
 	 *            the row of the board to set
@@ -255,6 +221,8 @@ public final class Board {
 				board[r][c] = new BoardSpot();
 			}
 		}
+		
+		//TODO: remove when not testing
 		Board.set(9, 4, Color.MAGENTA);
 		for (int i = 0; i < 2; ++i)
 		{
@@ -338,15 +306,6 @@ public final class Board {
 			Board.set(15, 11 + i, Color.RED);
 		}
 		Board.set(16, 12, Color.RED);
-	}
-	
-	/**MAIN METHOD
-	 */
-	@SuppressWarnings("unused")
-	public static void main(String[] args) {
-		Board board = new Board();
-		Board.init();
-		Board.drawBoard();
 	}
 
 }
