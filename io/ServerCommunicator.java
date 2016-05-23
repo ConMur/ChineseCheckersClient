@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -28,7 +28,7 @@ public class ServerCommunicator {
 	private boolean running;
 
 	private BufferedReader in;
-	private BufferedWriter out;
+	private PrintWriter out;
 
 	private PriorityQueue<Message> inQueue;
 	private PriorityQueue<Message> outQueue;
@@ -46,10 +46,7 @@ public class ServerCommunicator {
 			client = new Socket(ip, port);
 			in = new BufferedReader(new InputStreamReader(
 					client.getInputStream()));
-			out = new BufferedWriter(new OutputStreamWriter(
-					client.getOutputStream()));
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			out = new PrintWriter(client.getOutputStream());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -198,7 +195,7 @@ public class ServerCommunicator {
 		// Ensure there is a message to process
 		if (message != null) {
 			try {
-				out.write(message.getMessage() + "/n");
+				out.println(message.getMessage() + "/n");
 				out.flush();
 			} catch (IOException ioe) {
 				System.err.println("Error sending a message to the server");
