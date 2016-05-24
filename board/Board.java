@@ -226,6 +226,7 @@ public final class Board {
 				board[r][c] = new BoardSpot();
 			}
 		}
+		/*
 		Board.set(9, 4, Color.MAGENTA);
 		for (int i = 0; i < 2; ++i) {
 			Board.set(10, 4 + i, Color.MAGENTA);
@@ -290,7 +291,7 @@ public final class Board {
 		for (int i = 0; i < 2; ++i) {
 			Board.set(15, 11 + i, Color.RED);
 		}
-		Board.set(16, 12, Color.RED);
+		Board.set(16, 12, Color.RED);*/
 	}
 
 }
