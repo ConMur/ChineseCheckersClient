@@ -122,6 +122,7 @@ public class CCPanel extends JPanel
 		g.drawString("Last Move: " + ourLastMove, 0, 24);
 		g.drawString("Invalid moves: " + numInvalidMoves, 0, 38);
 		g.drawString("Number Timeouts: " + numTimeouts, 0, 52);
+		g.drawString("Our Color: " + AI.getColor(), 0, 66);
 	}
 	
 	public static void setLastMove(Move lastMove)
