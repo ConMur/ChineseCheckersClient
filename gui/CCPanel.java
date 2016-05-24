@@ -1,5 +1,6 @@
 package gui;
 
+import ai.AI;
 import io.ServerCommunicator;
 
 import java.awt.Color;
@@ -11,6 +12,8 @@ import javax.swing.JPanel;
 
 import board.Board;
 import board.Move;
+
+
 
 /**
  * The panel to display the events of the Chinese Checkers game going on. This
@@ -24,14 +27,17 @@ public class CCPanel extends JPanel
 	private boolean running;
 	private ServerCommunicator communicator;
 
-	private String ip = "10.242.171.106";
-	private int port = 421;
+	private String ip = "127.0.0.1";
+	private int port = 5000;
 	
 	//Stats
 	private static Move lastMove;
 	private static Move ourLastMove;
 	private static int numTimeouts;
 	private static int numInvalidMoves;
+	private static String color;
+	private static String winnerString;
+	private Font displayFont;
 	/**
 	 * Sets up this panel and the necessary classes to play this Chinese
 	 * Checkers game
@@ -61,6 +67,9 @@ public class CCPanel extends JPanel
 		ourLastMove = null;
 		numTimeouts = 0;
 		numInvalidMoves = 0;
+		color = null;
+		winnerString = null;
+		displayFont = new Font("serif", Font.BOLD, 14);
 	}
 
 	/* NETWORK METHODS */
@@ -114,15 +123,26 @@ public class CCPanel extends JPanel
 		g.fillRect(0, 0, getWidth(), getHeight());
 		Board.drawBoard(g);
 
-		// TODO: draw: move made by us, last move made by games, number of
-		// invalid moves, number of timeouts
-		g.setFont(new Font("serif", Font.BOLD, 14));
+		//Display statistics
+		g.setFont(displayFont);
 		g.setColor(Color.WHITE);
-		g.drawString("Move made: " + lastMove, 0, 10);
-		g.drawString("Last Move: " + ourLastMove, 0, 24);
-		g.drawString("Invalid moves: " + numInvalidMoves, 0, 38);
-		g.drawString("Number Timeouts: " + numTimeouts, 0, 52);
-		g.drawString("Our Color: " + AI.getColor(), 0, 66);
+		g.drawString("Our Last Move: " + lastMove, 0, this.getHeight() - 66);
+		g.drawString("Latest Move: " + ourLastMove, 0, this.getHeight() - 52);
+		g.drawString("Number of Invalid Moves: " + numInvalidMoves, 0, this.getHeight() - 38);
+		g.drawString("Number of Timeouts: " + numTimeouts, 0, this.getHeight() - 24);
+		g.drawString("Our Color: " + color, 0, this.getHeight() - 10);
+
+		//Display a winner if there is one
+		if(winnerString != null)
+		{
+			g.setFont(new Font("sans-serif", Font.BOLD, 50));
+			//Draw Shadow
+			g.setColor(Color.BLACK);
+			g.drawString(winnerString.toUpperCase() + " WON", getWidth() / 2 - 55, getHeight() / 2 + 5);
+			//Draw win font
+			g.setColor(Color.WHITE);
+			g.drawString(winnerString.toUpperCase() + " WON", getWidth() / 2 - 50, getHeight() / 2);
+		}
 	}
 	
 	public static void setLastMove(Move lastMove)
@@ -145,7 +165,15 @@ public class CCPanel extends JPanel
 		numInvalidMoves++;
 	}
 
+	public static void setColorString(String color)
+	{
+		CCPanel.color = color;
+	}
 
+	public static void setWinner(String winner)
+	{
+		winnerString = winner;
+	}
 
 	/**
 	 * Thread class. Draws the board to the screen
