@@ -136,6 +136,8 @@ public class ServerCommunicator
 			StringTokenizer tokenizer = new StringTokenizer(
 					message.getMessage());
 
+            System.out.println(cmd.toString() + ": "  + message.getMessage());
+
 			try
 			{
 				if (cmd == ServerCommand.MOVE)
@@ -176,11 +178,9 @@ public class ServerCommunicator
 				}
 				else if (cmd == ServerCommand.YOUR_TURN)
 				{
-					System.out.println("started move search");
 					Move move = AI.getMove();
 					if (move == null)
-						System.err.println("Move made is nyll");
-					System.out.println("end move search");
+						System.err.println("Move made is null");
 					String msg = "1 " + move.getOldRow() + " "
 							+ move.getOldCol() + " " + move.getNewRow() + " "
 							+ move.getNewCol();
@@ -295,7 +295,6 @@ public class ServerCommunicator
 				try
 				{
 					line = in.readLine();
-					System.out.println("READ LINE: " + line);
 					tokenizer = new StringTokenizer(line);
 				}
 				catch (NumberFormatException | IOException e)
