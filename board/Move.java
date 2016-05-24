@@ -1,12 +1,16 @@
 package board;
 
-/**Implement it directly on board to declare a move on
- * one of the board pieces.
+/**
+ * Represents a move on a chinese checkers board
+ * 
+ * @author Connor Murphy
+ *
  */
 public class Move {
 	private int oldRow, oldCol, newRow, newCol;
 
-	/**Creates a move
+	/**
+	 * Creates a move
 	 * 
 	 * @param oldRow
 	 *            the old row of the piece before moving it

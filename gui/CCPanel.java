@@ -21,8 +21,9 @@ public class CCPanel extends JPanel
 	private boolean running;
 	private ServerCommunicator communicator;
 
-	private String ip = "10.242.171.255";
-	private int port = 5050;
+	//private String ip = "localhost";
+	private String ip = "10.242.171.106";
+	private int port = 421;
 
 	/**
 	 * Sets up this panel and the necessary classes to play this Chinese

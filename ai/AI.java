@@ -1,10 +1,10 @@
 package ai;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.util.LinkedList;
 
 import board.Board;
-import board.BoardSpot;
 import board.Move;
 
 public class AI {
@@ -15,6 +15,7 @@ public class AI {
 	static int[][] weightedBoard;
 	static Point[] pieces;
 	static int turn;
+	private static  Color color;
 
 	/**
 	 * used by the program to return the optimal move out of all pieces
@@ -61,14 +62,19 @@ public class AI {
 			for (int i = 0; i < 10; i++) {
 				visited = new boolean[17][17];
 				Point tempMove = move(pieces[i].x, pieces[i].y, false);
-				if (tempMove != null && weightedBoard[pieces[bestPiece].y][pieces[bestPiece].x]
-						- weightedBoard[bestMovePiece.y][bestMovePiece.x] < weightedBoard[pieces[i].y][pieces[i].x]
+				if (tempMove != null
+						&& weightedBoard[pieces[bestPiece].y][pieces[bestPiece].x]
+								- weightedBoard[bestMovePiece.y][bestMovePiece.x] < weightedBoard[pieces[i].y][pieces[i].x]
 								- weightedBoard[tempMove.y][tempMove.x]) {
 					bestPiece = i;
 					bestMovePiece = tempMove;
 				}
 			}
-			return new Move(pieces[bestPiece].y, pieces[bestPiece].x, bestMovePiece.y, bestMovePiece.x);
+			System.out.println("Move " + pieces[bestPiece].x + " "
+					+ pieces[bestPiece].y + " " + bestMovePiece.x + " "
+					+ bestMovePiece.y);
+			return new Move(pieces[bestPiece].y, pieces[bestPiece].x,
+					bestMovePiece.y, bestMovePiece.x);
 		}
 
 	}
@@ -90,6 +96,7 @@ public class AI {
 			winLocation = startLocation + 3;
 		weightedBoard = new int[17][17];
 		if (startingLocation == 1) {
+			color = Color.RED;
 			setWeight(4, 0);
 			for (int i = 0; i < 4; ++i) {
 				pieces[i] = new Point(9 + i, 13);
@@ -102,6 +109,7 @@ public class AI {
 			}
 			pieces[9] = new Point(12, 16);
 		} else if (startingLocation == 2) {
+			color = Color.ORANGE;
 			setWeight(0, 4);
 			for (int i = 0; i < 4; ++i) {
 				pieces[i] = new Point(13 + i, 12);
@@ -114,6 +122,7 @@ public class AI {
 			}
 			pieces[9] = new Point(13, 9);
 		} else if (startingLocation == 3) {
+			color = Color.YELLOW;
 			setWeight(4, 12);
 			for (int i = 0; i < 4; ++i) {
 				pieces[i] = new Point(9 + i, 4);
@@ -126,6 +135,7 @@ public class AI {
 			}
 			pieces[9] = new Point(12, 7);
 		} else if (startingLocation == 4) {
+			color = Color.GREEN;
 			setWeight(12, 16);
 			for (int i = 0; i < 4; ++i) {
 				pieces[i] = new Point(4 + i, 3);
@@ -138,6 +148,7 @@ public class AI {
 			}
 			pieces[9] = new Point(0, 4);
 		} else if (startingLocation == 5) {
+			color = Color.BLUE;
 			setWeight(16, 12);
 			for (int i = 0; i < 4; ++i) {
 				pieces[i] = new Point(0 + i, 4);
@@ -150,6 +161,7 @@ public class AI {
 			}
 			pieces[9] = new Point(3, 7);
 		} else if (startingLocation == 6) {
+			color = Color.MAGENTA;
 			setWeight(12, 4);
 			for (int i = 0; i < 4; ++i) {
 				pieces[i] = new Point(4 + i, 12);
@@ -163,23 +175,20 @@ public class AI {
 			pieces[9] = new Point(4, 9);
 		}
 	}
+	
+	public static Color getColor(){
+		return color;
+	}
 
 	public static void movePiece(Move move) {
 		int i = 0;
-		while (pieces[i].x != move.getOldCol() && pieces[i].y != move.getOldRow()) {
+		while (!(pieces[i].x == move.getOldCol()
+				&& pieces[i].y == move.getOldRow())) {
 			i++;
 		}
-		BoardSpot temp = Board.getSpot(pieces[i].y, pieces[i].x);
-		// Board.set(move.getNewRow(), move.getNewCol(), temp.getColor());
-		// Board.set(move.getOldRow(), move.getOldCol(), null);
 		pieces[i].x = move.getNewCol();
 		pieces[i].y = move.getNewRow();
 	}
-
-	/**
-	 * bfs sets weight of board based on how many moves is required to reach win
-	 * state
-	 */
 
 	/*
 	 * public static void main(String[] args) { Board.init(); AI.start(1); for
@@ -219,7 +228,8 @@ public class AI {
 									&& !visited[current.y + i][current.x + j]) {
 								weightedBoard[current.y + i][current.x + j] = weightedBoard[current.y][current.x] + 1;
 								visited[current.y + i][current.x + j] = true;
-								l.addLast(new Point(current.x + j, current.y + i));
+								l.addLast(new Point(current.x + j, current.y
+										+ i));
 							}
 						}
 					}
@@ -244,22 +254,27 @@ public class AI {
 		if (!Board.isValidSpot(y, x)) {
 			return null;
 		}
+		System.out.println(x + " " + y);
 		Point bestMove = new Point(x, y);
 		for (int i = -1; i < 2; i++) {
 			for (int j = -1; j < 2; j++) {
-				if (!((i == 0 && j == 0) || (i * j < 0))) {
+				if (((i == 0 && j == 0) || (i * j < 0))) 
+					continue;
 					Point tempMove = bestMove;
 					int moveX = j;
 					int moveY = i;
 					// jump
-					if (Board.isValidSpot(y + moveY, x + moveX) && !visited[y + moveY][x + moveX]) {
-						if (Board.isValidSpot(y + moveY * 2, x + moveX * 2) && Board.isTaken(y + moveY, x + moveX)
+					if (Board.isValidSpot(y + moveY, x + moveX)
+							&& !visited[y + moveY][x + moveX]) {
+						if (Board.isValidSpot(y + moveY * 2, x + moveX * 2)
+								&& Board.isTaken(y + moveY, x + moveX)
 								&& !Board.isTaken(y + moveY * 2, x + moveX * 2)) {
 							visited[y + moveY][x + moveX] = true;
 							moveX *= 2;
 							moveY *= 2;
 							tempMove = move(x + moveX, y + moveY, true);
-						} else if (!jumped && !Board.isTaken(y + moveY, x + moveX)) {
+						} else if (!jumped
+								&& !Board.isTaken(y + moveY, x + moveX)) {
 							tempMove = new Point(x + moveX, y + moveY);
 						}
 					}
@@ -268,7 +283,7 @@ public class AI {
 						bestMove = tempMove;
 
 					}
-				}
+				
 			}
 		}
 		return bestMove;

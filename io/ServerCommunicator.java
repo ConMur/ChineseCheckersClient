@@ -1,11 +1,9 @@
 package io;
 
-import java.awt.Color;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.*;
-import java.io.OutputStreamWriter;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.NoSuchElementException;
@@ -47,6 +45,8 @@ public class ServerCommunicator {
 			in = new BufferedReader(new InputStreamReader(
 					client.getInputStream()));
 			out = new PrintWriter(client.getOutputStream());
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -86,6 +86,8 @@ public class ServerCommunicator {
 			client.close();
 			in.close();
 			out.close();
+		}catch(NullPointerException e){
+		//do nothing
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -116,12 +118,16 @@ public class ServerCommunicator {
 					int oldCol = Integer.parseInt(tokenizer.nextToken());
 					int newRow = Integer.parseInt(tokenizer.nextToken());
 					int newCol = Integer.parseInt(tokenizer.nextToken());
-					//TODO
-					//Move move = new Move(oldRow,oldCol,newRow,newCol);
-					//AI.move(move);
+
 					BoardSpot spot = Board.getSpot(oldRow, oldCol);
 					Board.set(oldRow, oldCol, null);
 					Board.set(newRow, newCol, spot.getColor());
+
+					// TODO
+					if (spot.getColor() == AI.getColor()) {
+						Move move = new Move(oldRow, oldCol, newRow, newCol);
+						AI.movePiece(move);
+					}
 
 				} else if (cmd == ServerCommand.NEW_GAME) {
 					int colour = Integer.parseInt(tokenizer.nextToken());
@@ -138,8 +144,8 @@ public class ServerCommunicator {
 					// TODO: start AI looking
 					System.out.println("started move search");
 					Move move = AI.getMove();
-					AI.movePiece(move);
-					if(move==null)
+					// AI.movePiece(move);
+					if (move == null)
 						System.out.println("asdfsa");
 					System.out.println("end move search");
 					String msg = "1 " + move.getOldRow() + " "
@@ -147,8 +153,9 @@ public class ServerCommunicator {
 							+ move.getNewCol();
 
 					// TODO: remove when not testing
-					Board.set(move.getOldRow(), move.getOldCol(), null);
-					Board.set(move.getNewRow(), move.getNewCol(), Color.BLUE);
+					// Board.set(move.getOldRow(), move.getOldCol(), null);
+					// Board.set(move.getNewRow(), move.getNewCol(),
+					// Color.BLUE);
 
 					outQueue.add(new Message(msg, ServerCommand.MOVE,
 							Priority.NORMAL));
@@ -194,13 +201,8 @@ public class ServerCommunicator {
 
 		// Ensure there is a message to process
 		if (message != null) {
-			try {
-				out.println(message.getMessage() + "/n");
-				out.flush();
-			} catch (IOException ioe) {
-				System.err.println("Error sending a message to the server");
-				ioe.printStackTrace();
-			}
+			out.println(message.getMessage());
+			out.flush();
 		}
 
 	}
@@ -237,12 +239,11 @@ public class ServerCommunicator {
 
 				// Change the numerical command into the corresponding enum
 				// value
-				ServerCommand cmd;
+				ServerCommand cmd = null;
 				try {
 					cmd = ServerCommand.values()[cmdNo - 1];
 				} catch (ArrayIndexOutOfBoundsException e) {
-					throw new RuntimeException("The command number, " + cmdNo
-							+ " is invalid");
+					System.err.println("Nonexistant server command...");
 				}
 
 				// Make the message everything but the server command
