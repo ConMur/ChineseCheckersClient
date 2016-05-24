@@ -23,7 +23,7 @@ import board.Move;
  * responds to them as needed. This is the client side of the Chinese Checkers
  * networking.
  *
- * @author Connor M. (Client and Server)
+ * @author Connor M. (Client)
  */
 public class ServerCommunicator
 {
@@ -49,10 +49,6 @@ public class ServerCommunicator
 			in = new BufferedReader(new InputStreamReader(
 					client.getInputStream()));
 			out = new PrintWriter(client.getOutputStream());
-		}
-		catch (UnknownHostException e)
-		{
-			e.printStackTrace();
 		}
 		catch (IOException e)
 		{
@@ -140,33 +136,56 @@ public class ServerCommunicator
 
 			try
 			{
-				if (cmd == ServerCommand.MOVE)
-				{
-					int oldRow = Integer.parseInt(tokenizer.nextToken());
-					int oldCol = Integer.parseInt(tokenizer.nextToken());
-					int newRow = Integer.parseInt(tokenizer.nextToken());
-					int newCol = Integer.parseInt(tokenizer.nextToken());
+                    if (cmd == ServerCommand.MOVE) {
+                        synchronized (this) {
+                        int oldRow = Integer.parseInt(tokenizer.nextToken());
+                        int oldCol = Integer.parseInt(tokenizer.nextToken());
+                        int newRow = Integer.parseInt(tokenizer.nextToken());
+                        int newCol = Integer.parseInt(tokenizer.nextToken());
 
-					BoardSpot spot = Board.getSpot(oldRow, oldCol);
-					Board.set(oldRow, oldCol, null);
-					Board.set(newRow, newCol, spot.getColor());
-					
-					Move move = new Move(oldRow, oldCol, newRow, newCol);
-					
-					CCPanel.setLastMove(move);
+                        BoardSpot spot = Board.getSpot(oldRow, oldCol);
+                        Board.set(oldRow, oldCol, null);
+                        Board.set(newRow, newCol, spot.getColor());
 
-					if (spot.getColor() == AI.getColor())
-					{
-						AI.movePiece(move);
-					}
+                        Move move = new Move(oldRow, oldCol, newRow, newCol);
 
-				}
+                        CCPanel.setLastMove(move);
+
+                        if (spot.getColor() == AI.getColor()) {
+                            AI.movePiece(move);
+                        }
+
+                    }
+                }
 				else if (cmd == ServerCommand.NEW_GAME)
 				{
 					int colour = Integer.parseInt(tokenizer.nextToken());
 					Board.resetBoard();
 					AI.start(colour);
-
+                    if (colour == 1)
+                    {
+                        CCPanel.setColorString("Red");
+                    }
+                    else if (colour == 2)
+                    {
+                        CCPanel.setColorString("Orange");
+                    }
+                    else if (colour == 3)
+                    {
+                        CCPanel.setColorString("Yellow");
+                    }
+                    else if (colour == 4)
+                    {
+                        CCPanel.setColorString("Green");
+                    }
+                    else if (colour == 5)
+                    {
+                        CCPanel.setColorString("Blue");
+                    }
+                    else if (colour == 6)
+                    {
+                        CCPanel.setColorString("Purple");
+                    }
 				}
 				else if (cmd == ServerCommand.PLACE_PIECE)
 				{
@@ -243,6 +262,7 @@ public class ServerCommunicator
 						if(ourColor == Color.MAGENTA)
 							System.out.println("WE WON");
 					}
+                    CCPanel.setWinner(color);
 					System.out.println(color + " won!");
 				}
 				else
@@ -295,6 +315,13 @@ public class ServerCommunicator
 				try
 				{
 					line = in.readLine();
+                    if(line == null)
+                    {
+                        //The server closed, exit the program
+                        System.out.println("The server is closed");
+                        running = false;
+                        return;
+                    }
 					tokenizer = new StringTokenizer(line);
 				}
 				catch (NumberFormatException | IOException e)
@@ -351,7 +378,6 @@ public class ServerCommunicator
 					synchronized (inQueue)
 					{
 						inQueue.add(new Message(message, cmd, Priority.HIGH));
-
 					}
 				}
 				else
@@ -359,7 +385,6 @@ public class ServerCommunicator
 					synchronized (inQueue)
 					{
 						inQueue.add(new Message(message, cmd, Priority.NORMAL));
-
 					}
 				}
 			}
