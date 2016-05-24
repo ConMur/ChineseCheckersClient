@@ -44,6 +44,6 @@ public class Move
 
 	public String toString()
 	{
-		return "[" + oldCol + ", " + oldRow + " -> " + newCol + " " + newRow + "]";
+		return "[" + oldCol + ", " + oldRow + " -> " + newCol + ", " + newRow + "]";
 	}
 }
