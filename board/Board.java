@@ -138,7 +138,7 @@ public final class Board {
 	 * @throws IllegalArgumentException
 	 *             if the row that is set is not a valid row
 	 */
-	public static void set(int row, int col, Color color) {
+	public static synchronized void set(int row, int col, Color color) {
 		if (invalidSpots[row][col])
 			throw new IllegalArgumentException(
 					"That is an invalid spot! (row: " + row + " col: " + col
@@ -147,7 +147,7 @@ public final class Board {
 		board[row][col] = new BoardSpot(color);
 	}
 
-	public static void set(int row, int col, int color) {
+	public static synchronized void set(int row, int col, int color) {
 		if (invalidSpots[row][col])
 			throw new IllegalArgumentException(
 					"That is an invalid spot! (row: " + row + " col: " + col
