@@ -1,1 +1,14 @@
-/* ALGORITHMIC
+/* ALGORITHMIC PROCEDURES */
+We will check every of our piece to determine which move we will perform.
+All pieces are referenced as point arrays.
+We used two parallel matrices, one to track which spots 
+we already visited, and the other which determiens the weight of each move.
+
+For the first two moves, we always implement the same initial moves heuristic.
+
+For all further moves, we use the weight matrix to track the best piece to move,
+and where this piece will move. We will never move to a point we already visited,
+as it will create an infinite loop.
+
+The weight is determined by the position of the piece (farther pieces have priority)
+and we will use the move method to determine where we will jump.
